@@ -13,8 +13,21 @@ html, body {
   text-align: center;
 }
 
-#browser {
+#children {
+  flex-grow: 1;
+}
 
+#browser {
+  overflow-y: scroll;
+  width: 200px; 
+  height: 100%; 
+  background: rgba(37,37,38,1);  
+  display: flex;
+  flex-direction: column;
+}
+
+#browser-container {
+  background: rgba(37,37,38,1);  
 }
 
 .browser-row {
@@ -38,6 +51,10 @@ html, body {
   text-align: left;
   /* margin: 5px; */
   width: 100%;
+}
+
+#features {
+  height: 200px;
 }
 
 #main-view {
@@ -68,6 +85,16 @@ html, body {
   width: 100%;
 }
 
+.row-divider-white {
+  height: 1px;
+  background: rgba(255, 255, 255, .5);
+  width: 100%;
+
+  margin-top: 5px;
+  margin-bottom: 5px;
+  /* padding-left: 7px; */
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -76,4 +103,23 @@ html, body {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(37,37,38,1);
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,.75);	
+  border-radius: 5px;  
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
 }

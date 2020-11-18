@@ -15,20 +15,26 @@
 
 <body>
   <div style="display: flex; height: 100%;">
-    <div id="browser" style="width: 200px; height: 100%; background: rgba(37,37,38,1);" class="noselect">
-      <div id="children">
-
-        <div class="browser-row browser-row-dir">
-          <!-- <div class="browser-row-inner">
-            <div id="folder-button" class="folder-row-button">〉</div>
-            <div></div>
-          </div> -->
-    
-          <div id="path__children"></div>
-        </div>  
-
+    <div id="browser-container">
+      <div id="browser" class="noselect">
+        <div id="children">
+  
+          <div class="browser-row browser-row-dir">    
+            <div id="iroot" id="folder-button" class="browser-row-inner">
+              <div id="item-icon" class="item-icon"></div>
+              <div>/</div>
+            </div>
+            <div id="i0"></div>
+          </div>  
+  
+        </div>
+        <div class="row-divider-white"></div>
+        <div id="features">
+  
+        </div>
       </div>
     </div>
+
     <div id="main-view">
       
     </div>

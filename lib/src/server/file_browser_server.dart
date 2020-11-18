@@ -1,12 +1,17 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:path/path.dart' as path;
 import 'package:websockets/server.dart';
 
+import 'words.dart' as words;
+
 class FileBrowserServer extends FileServer {
   static const basePath = 'data/';
 
-  final downloadable = <String, String>{'derp': 'inside/favicon2.ico'};
+  final shortenedUrlToPath = <String, String>{};
+
+  final random = Random();
 
   FileBrowserServer(String address, int port,
       {String filesDirectory = FileServer.defaultFilesDirectory,
@@ -15,29 +20,33 @@ class FileBrowserServer extends FileServer {
 
   @override
   Future<bool> onRequestPre(HttpRequest req) async {
+    // print(req);
+
     req.response.headers.set('cache-control', 'no-cache');
 
-    // final name = path.basename(req.uri.path);
+    final name = path.basename(req.uri.path);
 
-    // if (downloadable.containsKey(name)) {
-    //   final file = File(path.join(basePath, downloadable[name]));
+    final p = shortenedUrlToPath[name];
 
-    //   print(file.absolute.path);
+    if (p != null) {
+      final file = File(p);
+      print(p);
+      print(file.absolute.path);
 
-    //   if ((await file.exists())) {
-    //     final bytes = await file.readAsBytes();
+      if ((await file.exists())) {
+        final bytes = await file.readAsBytes();
 
-    //     req.response.headers //
-    //       ..set('Content-Type', 'application/octet-stream')
-    //       ..set('Content-Length', bytes.length)
-    //       ..set('Content-Disposition', 'attachment; filename="derp.ico"');
+        req.response.headers //
+          ..set('Content-Type', 'application/octet-stream')
+          ..set('Content-Length', bytes.length)
+          ..set('Content-Disposition', 'attachment; filename="${path.basename(p)}"');
 
-    //     req.response.add(bytes);
-    //     await req.response.close();
+        req.response.add(bytes);
+        await req.response.close();
 
-    //     return true;
-    //   }
-    // }
+        return true;
+      }
+    }
 
     return false;
   }
@@ -45,9 +54,44 @@ class FileBrowserServer extends FileServer {
   @override
   void handleSocketStart(HttpRequest req, ServerWebSocket socket) {
     socket //
-      ..on('list_directory', (data) => onListDirectory(socket, data));
+      ..on('list_directory', (data) => onListDirectory(socket, data))
+      ..on('generate_download', (data) => onGenerateDownload(socket, data));
 
     onListDirectory(socket, const {'path': ''});
+  }
+
+  Future<void> onGenerateDownload(ServerWebSocket socket, data) async {
+    print('request generate download $data');
+
+    final p = path.join(basePath, '${data["path"]}');
+
+    if (shortenedUrlToPath.containsValue(p)) {
+      // TODO copy existing link
+      return;
+    }
+
+    final isDir = await FileSystemEntity.isDirectory(p);
+
+    if (isDir) {
+    } else {
+      final f = File(p);
+      if ((await f.exists())) {
+        var shortendUrl;
+
+        do {
+          var adj1 = words.adjectives[random.nextInt(words.adjectives.length)];
+          var adj2 = words.adjectives[random.nextInt(words.adjectives.length)];
+
+          var animal = words.animals[random.nextInt(words.animals.length)];
+
+          shortendUrl = '$adj1$adj2$animal';
+        } while (shortenedUrlToPath.keys.contains(shortendUrl));
+
+        shortenedUrlToPath[shortendUrl] = p;
+
+        print('created download link: $shortendUrl');
+      }
+    }
   }
 
   Future<void> onListDirectory(ServerWebSocket socket, data) async {

@@ -29,4 +29,4 @@ COPY --from=dart-runtime /app/website/build /website/build
 CMD []
 ENTRYPOINT ["/server"]
 
-ENV PORT=8080
+ENV PORT=8081
